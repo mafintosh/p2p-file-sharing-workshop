@@ -4,7 +4,7 @@ Learn about distributed file sharing through a series of fun and exciting exerci
 
 # Authors
 
-Brought to by
+Brought to you by
 
 * [@mafintosh](https://github.com/mafintosh)
 * [@watson](https://github.com/mafintosh)

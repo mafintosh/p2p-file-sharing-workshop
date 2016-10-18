@@ -1,46 +1,43 @@
-// This program builds on exercise 04 and adds what we've learned about hashing
-// in exercise 05 and 06 to automatically join a channel with the id of the
-// file-hash we're sharing
+// This program introduces chunking to allow us to share just a priece of the
+// file
 
 var fs = require('fs')
 var net = require('net')
-var pump = require('pump')
 var DC = require('discovery-channel')
-var hasher = require('hash-of-stream')
 var msgpack = require('msgpack5-stream')
-// var randomAccessFile = require('random-access-file')
+var fsChunkStore = require('fs-chunk-store')
 
-// Accept the filename we want to share as an argument to the program
-var filename = process.argv[2]
+// Accept the id of the channel we want to create as the 1st argument to the program
+var id = process.argv[2]
+// Accept the filename we want to share as the 2nd argument to the program
+var filename = process.argv[3]
 
-if (!filename) {
-  console.log('Usage: node server.js [filename]')
+if (!id || !filename) {
+  console.log('Usage: node server.js [id] [filename]')
   process.exit(1)
 }
 
-var file = fs.createReadStream(filename)
+var CHUNK_SIZE = 1024
+var file = fsChunkStore(CHUNK_SIZE, {path: filename})
+var channel = DC()
 
-// Get the hash of the file
-hasher(file, function (hash) {
-  var channel = DC()
+var server = net.createServer(function (socket) {
+  console.log('New peer connected: %s:%s', socket.remoteAddress, socket.remotePort)
 
-  var server = net.createServer(function (socket) {
-    console.log('New peer connected: %s:%s', socket.remoteAddress, socket.remotePort)
+  // Wrap our TCP socket with a msgpack5 protocol wrapper
+  var protocol = msgpack(socket)
 
-    var packet = {type: 'foo', data: 'bar'}
-    var buffer = msgpack.encode(packet)
-
-    decode.on('data', function (msg) {
-      msg = msgpack.decode(msg)
-      console.log('-- got msg:', msg)
-    })
-
-    pump(encode, socket, decode)
+  protocol.on('data', function (msg) {
+    if (msg.type === 'request') {
+      file.get(msg.chunk, function (err, buf) {
+        if (err) throw err
+        protocol.write({type: 'response', chunk: msg.chunk, data: buf})
+      })
+    }
   })
+})
 
-  server.listen(function () {
-    // join a channel with the id being equal to the file hash
-    channel.join(hash, server.address().port)
-    console.log('Sharing %s as %s', filename, hash)
-  })
+server.listen(function () {
+  channel.join(id, server.address().port)
+  console.log('Sharing %s as %s', filename, id)
 })

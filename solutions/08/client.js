@@ -1,19 +1,18 @@
-// This program builds on exercise 04 and adds what we've learned about hashing
-// in exercise 05 and 06 to validate the hash of the received file
+// This program introduces chunking to allow us to receive just a piece of the
+// file
 
 var fs = require('fs')
 var net = require('net')
-var pump = require('pump')
 var DC = require('discovery-channel')
-var hasher = require('hash-of-stream')
-var msgpack = require('msgpack5')()
-var lpstream = require('length-prefixed-stream')
+var msgpack = require('msgpack5-stream')
 
-// Accept the id we want to fetch as an argument to the program
+// Accept the id we want to fetch as the 1st argument to the program
 var id = process.argv[2]
+// Accept the chunk we want to fetch as the 2nd argument to the program
+var chunk = process.argv[3]
 
-if (!id) {
-  console.log('Usage: node client.js [id]')
+if (!id || !chunk) {
+  console.log('Usage: node client.js [id] [chunk]')
   process.exit(1)
 }
 
@@ -25,23 +24,16 @@ channel.once('peer', function (peerId, peer, type) {
   console.log('New peer %s:%s found via %s', peer.host, peer.port, type)
 
   var socket = net.connect(peer.port, peer.host)
-  var encode = lpstream.encode()
-  var decode = lpstream.decode()
 
-  console.log('Fetching %s...', id)
+  // Wrap our TCP socket with a msgpack5 protocol wrapper
+  var protocol = msgpack(socket)
 
-  decode.on('data', function (msg) {
-    msg = msgpack.decode(msg)
-    console.log('-- got msg:', msg)
+  protocol.on('data', function (msg) {
+    // For now just output the message we got from the server
+    console.log(msg)
   })
 
-  pump(encode, socket, decode)
+  // To test that it works, try and request chunk zero
+  console.log('Fetching chunk %d from %s...', chunk, id)
+  protocol.write({type: 'request', chunk: chunk})
 })
-
-// Validate the hash of the downloaded file is as expected
-function validate (filename, hash, callback) {
-  hasher(file, function (hash2) {
-    if (hash !== hash2) callback(new Error('File hash is invalid!'))
-    else callback()
-  })
-}

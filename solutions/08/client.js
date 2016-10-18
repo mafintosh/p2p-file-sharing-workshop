@@ -1,7 +1,6 @@
 // This program introduces chunking to allow us to receive just a piece of the
 // file
 
-var fs = require('fs')
 var net = require('net')
 var DC = require('discovery-channel')
 var msgpack = require('msgpack5-stream')

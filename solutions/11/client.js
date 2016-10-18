@@ -1,7 +1,6 @@
 // This program builds on exercise 10 and allows for downloading the chunks
 // from multiple servers
 
-var fs = require('fs')
 var net = require('net')
 var crypto = require('crypto')
 var DC = require('discovery-channel')

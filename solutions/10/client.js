@@ -1,7 +1,6 @@
 // This program builds on exercise 09 and completes the client by downloading
 // and validating all hashes
 
-var fs = require('fs')
 var net = require('net')
 var crypto = require('crypto')
 var DC = require('discovery-channel')

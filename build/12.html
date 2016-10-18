@@ -1,4 +1,4 @@
-<html><head><title>Problem 10</title><style>
+<html><head><title>Problem 12</title><style>
 body { padding: 40px; }
 @font-face {
   font-family: octicons-anchor;
@@ -655,27 +655,31 @@ body { padding: 40px; }
   z-index: 1;
   position: relative;
   border-color: #4078c0;
-}</style></head><body class="markdown-body"><h1 id="10-chunking-and-hashing-part-2-">10 - Chunking and hashing (part 2).</h1>
-<p>Let&#39;s make our client more complete by making it download and verify all
-the chunks and saving them to disk.</p>
-<h2 id="assignment">Assignment</h2>
-<p>Server:</p>
+}</style></head><body class="markdown-body"><h1 id="12-on-demand-streaming">12 - On demand streaming</h1>
+<p>Most video or audio playing software (like
+<a href="http://www.videolan.org/vlc/index.html">VLC</a>) have a way to stream
+content from an HTTP server using range requests. Let&#39;s create a bridge
+that exposes our application as an HTTP endpoint.</p>
+<h2 id="tips">Tips</h2>
+<p>Make sure the bridge supports the HTTP <code>Range</code> header.</p>
+<p>When an HTTP client wants only part of a file being served by the
+server, it can set the <code>Range</code> header to indicate which bytes it wants
+to fetch:</p>
+<pre><code>Range: bytes=500-999
+</code></pre><h2 id="assignment">Assignment</h2>
 <ul>
-<li>Add the size of the file being shared to the handshake</li>
-<li>Add the chunk-size of the file being shared to the handshake</li>
+<li>Create a priority queue so certain chunks get served first (as they
+are needed when scrubbing)</li>
+<li>Create an HTTP server that bridges the p2p application</li>
 </ul>
-<p>Client:</p>
+<h2 id="tests">Tests</h2>
+<p>Share a video file using the server and see if you can play it in VLC by
+connecting to the bridge.</p>
+<h2 id="what-s-next-">What&#39;s next?</h2>
+<p>If you get this far, here&#39;s a few ideas for how to expand your p2p
+program:</p>
 <ul>
-<li>Use the <a href="https://github.com/feross/fs-chunk-store">fs-chunk-store</a>
-module that we introduced in exercise 8 to save each chunk received in
-the client into a file (tip: use the file-size expose in the handshake
-to initialize the chunk store)</li>
+<li>Make it work in the browser</li>
+<li>Live streaming</li>
 </ul>
-<h2 id="testing">Testing</h2>
-<ol>
-<li>Run a server that shares a file</li>
-<li>Have your client connect to the server to download the file</li>
-<li>Validate that the file downloaded is valid</li>
-</ol>
-<p>When you are done <a href="11.html">click here to go to the next exercise</a></p>
 </body></html>

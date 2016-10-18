@@ -44,7 +44,7 @@ channel.once('peer', function (peerId, peer, type) {
 
 // Validate the hash of the downloaded file is as expected
 function validate (filename, hash, callback) {
-  hasher(file, function (hash2) {
+  hasher(fs.createReadStream(filename), function (hash2) {
     if (hash !== hash2) callback(new Error('File hash is invalid!'))
     else callback()
   })

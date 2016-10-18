@@ -656,14 +656,14 @@ body { padding: 40px; }
   position: relative;
   border-color: #4078c0;
 }</style></head><body class="markdown-body"><h1 id="2-streaming-a-file-over-http-">2 - Streaming a file over HTTP.</h1>
-<p>Now that we know how to stream files let&#39;s something more useful: streaming files over http.
-Write a web server that streams it&#39;s own source code through http.</p>
+<p>Now that we know how to stream files let&#39;s do something more useful: Let&#39;s share files over http.
+Write a web server that streams a file via http.</p>
 <h2 id="tips">Tips</h2>
 <p>To write an http server, you will need the <a href="https://nodejs.org/api/http.html">http</a> core node
 module.</p>
 <p>When writing an http server, usually with <code>http.createServer(function (req, res) { })</code>, the <code>res</code> parameter
 is a writable stream, so we can use the same tools we used in problem 1 to pipe the file to this stream.</p>
-<p>You can build on the solution from the previous exercise. Here is our&#39;s:</p>
+<p>You can build on the solution from the previous exercise. Here is ours:</p>
 <pre><code class="lang-js">var fs = require(&#39;fs&#39;)
 var pump = require(&#39;pump&#39;)
 
@@ -678,6 +678,8 @@ pump(file, process.stdout)
 <h2 id="testing">Testing</h2>
 <p>To test your solution, run it with node.</p>
 <pre><code>node server.js
-</code></pre><p>And access it via curl or a regular web browser. If your server running on port 3000, then run</p>
+</code></pre><p>And access it via curl or a regular web browser. If your server is running on port 3000, then run</p>
 <pre><code>curl localhost:3000
-</code></pre></body></html>
+</code></pre><p>Validate that it downloads (outputs) the file that you expect.</p>
+<p>When you are done <a href="03.html">click here to go to the next exercise</a></p>
+</body></html>

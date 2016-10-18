@@ -18,7 +18,8 @@ if (!id || !filename) {
 }
 
 var CHUNK_SIZE = 1024
-var file = fsChunkStore(CHUNK_SIZE, {path: filename})
+var FILE_LENGTH = fs.statSync(filename).size
+var file = fsChunkStore(CHUNK_SIZE, {path: filename, length: FILE_LENGTH})
 var channel = DC()
 
 var server = net.createServer(function (socket) {

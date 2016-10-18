@@ -1,5 +1,5 @@
-// This program builds on exercise 08 and completes the client by donwloading
-// all the chunks and validating their hashes
+// This program builds on exercise 08 and extends the client to download only a
+// requested chunk and validating its hash
 
 var fs = require('fs')
 var net = require('net')

@@ -33,7 +33,6 @@ channel.once('peer', function (peerId, peer, type) {
     console.log(msg)
   })
 
-  // To test that it works, try and request chunk zero
   console.log('Fetching chunk %d from %s...', chunk, id)
   protocol.write({type: 'request', chunk: chunk})
 })

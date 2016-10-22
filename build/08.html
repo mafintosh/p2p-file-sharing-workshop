@@ -694,6 +694,7 @@ var server = net.createServer(function (socket) {
 
   protocol.on(&#39;data&#39;, function (msg) {
     // TODO: If the message type is `request`, respond with the requested chunk
+    // The response should look like {type: &#39;response&#39;, chunk: chunkNumber, data: chunkData}
   })
 })
 

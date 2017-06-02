@@ -30,9 +30,9 @@ var server = net.createServer(function (socket) {
 
   protocol.on('data', function (msg) {
     if (msg.type === 'request') {
-      file.get(msg.chunk, function (err, buf) {
+      file.get(msg.index, function (err, buf) {
         if (err) throw err
-        protocol.write({type: 'response', chunk: msg.chunk, data: buf})
+        protocol.write({type: 'response', index: msg.index, data: buf})
       })
     }
   })

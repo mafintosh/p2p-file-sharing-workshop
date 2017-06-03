@@ -18,11 +18,15 @@ module.exports = function (id) {
   var fetchers = []
   var handshake
   var file
+  var connected = {}
 
   channel.join(id)
 
   channel.on('peer', function (peerId, peer, type) {
     console.log('New peer %s:%s found via %s', peer.host, peer.port, type)
+
+    if (connected[peerId.toString('hex')]) return
+    connected[peerId.toString('hex')] = true
 
     var socket = net.connect(peer.port, peer.host)
     var protocol = msgpack(socket)
@@ -46,12 +50,14 @@ module.exports = function (id) {
 
           queue = queue.filter(function (w) {
             if (w.index === msg.index) {
-              w.cb(null, msg.data)
+              process.nextTick(function () {
+                w.cb(null, msg.data)
+              })
               return false
             }
             return true
           })
-          
+
           fetchNextChunk()
         })
       })
@@ -63,13 +69,6 @@ module.exports = function (id) {
       function fetchNextChunk () {
         for (var i = 0; i < queue.length; i++) {
           if (!downloaded.get(queue[i].index)) return download(queue[i].index)
-        }
-
-        var chunk = Math.floor(Math.random() * hashes.length)
-        if (!downloaded.get(chunk)) return download(chunk)
-
-        for (chunk = 0; chunk < hashes.length; chunk++) {
-          if (!downloaded.get(chunk)) return download(chunk)
         }
       }
 

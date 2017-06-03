@@ -666,10 +666,15 @@ that exposes our application as an HTTP endpoint.</p>
 server, it can set the <code>Range</code> header to indicate which bytes it wants
 to fetch:</p>
 <pre><code>Range: bytes=500-999
-</code></pre><p>Here&#39;s some files to get started:</p>
+</code></pre><p>Use the <a href="https://www.npmjs.com/package/range-parser">range-parser</a>
+module to make this easy.</p>
+<p>Here&#39;s some files to get started:</p>
 <ul>
-<li>Use the same server as from exercise 11 (<a href="../solutions/12/server.js">solutions/12/server.js</a>)</li>
-<li>We&#39;ll modify the client from exercise 11 slightly by exposing it as an API so our HTTP server can use it programatically (<a href="../solutions/12/client.js">solutions/12/client.js</a>)<ul>
+<li>Use the same server as from exercise 11
+(<a href="../solutions/12/server.js">solutions/12/server.js</a>)</li>
+<li>We&#39;ll modify the client from exercise 11 slightly by exposing it as an
+API so our HTTP server can use it programatically
+(<a href="../solutions/12/client.js">solutions/12/client.js</a>)<ul>
 <li><code>client.getHandshake(callback)</code> - The callback will be called with
 an optional error object as the first argument and an object as the
 2nd: <code>{type: &#39;handshake&#39;, mimeTyoe: &#39;...&#39;, hashses: [...], chunkSize:
@@ -681,11 +686,7 @@ object as the first argument and the chunk as the 2nd</li>
 </li>
 </ul>
 <h2 id="assignment">Assignment</h2>
-<ul>
-<li>Create a priority queue so certain chunks get served first (as they
-are needed when scrubbing)</li>
-<li>Create an HTTP server that bridges the p2p application</li>
-</ul>
+<p>Create an HTTP server that bridges the p2p application.</p>
 <h2 id="tests">Tests</h2>
 <p>Share a video file using the server and see if you can play it in VLC by
 connecting to the bridge.</p>

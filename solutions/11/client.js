@@ -18,6 +18,7 @@ if (!id || !filename) {
 
 var channel = DC({dht: false}) // set true to work over the internet
 var downloaded = new Bitfield(1024, {grow: Infinity})
+var file
 
 channel.join(id)
 
@@ -31,7 +32,7 @@ channel.on('peer', function (peerId, peer, type) {
     var hashes = msg.hashes
     if (!hashValidate(hashes.join('\n'), id)) throw new Error('Invalid hashes!')
 
-    var file = fsChunkStore(msg.chunkSize, {path: filename, length: msg.fileSize})
+    if (!file) file = fsChunkStore(msg.chunkSize, {path: filename, length: msg.fileSize})
 
     protocol.on('data', function (msg) {
       if (!hashValidate(msg.data, hashes[msg.chunk])) throw new Error('Invalid chunk hash!')

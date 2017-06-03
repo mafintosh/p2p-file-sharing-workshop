@@ -35,11 +35,11 @@ channel.on('peer', function (peerId, peer, type) {
     if (!file) file = fsChunkStore(msg.chunkSize, {path: filename, length: msg.fileSize})
 
     protocol.on('data', function (msg) {
-      if (!hashValidate(msg.data, hashes[msg.chunk])) throw new Error('Invalid chunk hash!')
+      if (!hashValidate(msg.data, hashes[msg.index])) throw new Error('Invalid chunk hash!')
 
-      file.put(msg.chunk, msg.data, function (err) {
+      file.put(msg.index, msg.data, function (err) {
         if (err) throw err
-        downloaded.set(msg.chunk)
+        downloaded.set(msg.index)
         fetchNextChunk()
       })
     })
@@ -60,7 +60,7 @@ channel.on('peer', function (peerId, peer, type) {
 
     function download (chunk) {
       console.log('Fetching chunk %d...', chunk)
-      protocol.write({type: 'request', chunk: chunk})
+      protocol.write({type: 'request', index: chunk})
     }
   })
 })

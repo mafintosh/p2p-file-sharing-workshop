@@ -47,7 +47,7 @@ channel.once('peer', function (peerId, peer, type) {
 
     // Fetch the chunk that the user requested
     console.log('Fetching chunk %d from %s...', chunk, id)
-    protocol.write({type: 'request', chunk: chunk})
+    protocol.write({type: 'request', index: chunk})
   })
 })
 

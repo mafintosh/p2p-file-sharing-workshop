@@ -658,7 +658,7 @@ body { padding: 40px; }
 }</style></head><body class="markdown-body"><h1 id="7-discovery-and-validation-with-hashes-">7 - Discovery and validation with hashes.</h1>
 <p>We now have the tools we need to fix our security issues from exercise 4.</p>
 <p>As we know, hashes can be used to summarize the contents of a file.
-Which means we can use them as an id for our service discovery strategy.</p>
+This means we can use them as an id for our service discovery strategy.</p>
 <p>Build on the solution to exercise 4, but use file hashes as a way to identify
 channels for service discovery. Also, when the file is downloaded in the client,
 verify that the hash of the downloaded file matches the expected hash.</p>
@@ -670,7 +670,7 @@ var net = require(&#39;net&#39;)
 var pump = require(&#39;pump&#39;)
 var DC = require(&#39;discovery-channel&#39;)
 
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 
 var server = net.createServer(function (socket) {
   console.log(&#39;New peer connected: %s:%s&#39;, socket.remoteAddress, socket.remotePort)
@@ -692,7 +692,7 @@ var net = require(&#39;net&#39;)
 var pump = require(&#39;pump&#39;)
 var DC = require(&#39;discovery-channel&#39;)
 
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 var id = process.argv[2]
 
 channel.join(id)

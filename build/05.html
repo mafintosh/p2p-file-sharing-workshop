@@ -656,11 +656,11 @@ body { padding: 40px; }
   position: relative;
   border-color: #4078c0;
 }</style></head><body class="markdown-body"><h1 id="5-hashing">5 - Hashing</h1>
-<p>In the previous exercise you created a simple file-downloader that automatically discoveres servers to download the file from. But it has a serious security problem: What if someone is a bad actor and wants to send you malicious data?</p>
+<p>In the previous exercise you created a simple file-downloader that automatically discoveres servers to download the file from. But it has a serious security problem: What if a peer (the server in this exercise) is a bad actor and wants to send you malicious data?</p>
 <p>This exercise introduces you to a concept called hashing that we can later use to validate that the data we&#39;re getting has not been compromised.</p>
 <p>Hashing is essentially a way to create a small fingerprint representing a large chunk of data. Many different hashing algorithms exists, but in this workshop we&#39;ll just use one called <code>sha256</code>.</p>
 <h2 id="assignment">Assignment</h2>
-<p>Write a program that prints out the <code>sha256</code> hash of the string &#39;NodeConf EU 2016&#39;.</p>
+<p>Write a program that prints out the <code>sha256</code> hash of the string &#39;Web Rebels 2017&#39;.</p>
 <h2 id="tips">Tips</h2>
 <p>When working with hashing in Node.js, we use the <a href="https://nodejs.org/api/crypto.html">crypto</a> module from Node core. Use the method <a href="https://nodejs.org/api/crypto.html#crypto_crypto_createhash_algorithm"><code>createHash()</code></a>.</p>
 <pre><code class="lang-js">var crypto = require(&#39;crypto&#39;)
@@ -669,6 +669,6 @@ var hash = crypto.createHash(&#39;sha256&#39;)
 //...
 </code></pre>
 <h2 id="tests">Tests</h2>
-<p>Hash the string <code>NodeConf EU 2016</code> and verify that the hex value of the hash is <code>ac5a6afc8c8d15da64cd9931fd5a4ba4e716c9b5679d4d57289022a72b1fcd14</code></p>
+<p>Hash the string <code>Web Rebels 2017</code> and verify that the hex value of the hash is <code>a25cc4405386d2abaf835b8f57710de683cb99f6e7833c4cd59b6d57f0171877</code></p>
 <p>When you are done <a href="06.html">click here to go to the next exercise</a></p>
 </body></html>

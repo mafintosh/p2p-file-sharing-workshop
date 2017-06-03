@@ -685,7 +685,7 @@ server.listen(3000, function () {
 <p>The discovery-channel module uses a combination of the multicast-dns and the Bittorrent DHT to make it possible to both discover and announce peers on your local network and even across the internet.</p>
 <p>Server example:</p>
 <pre><code class="lang-js">var DC = require(&#39;discovery-channel&#39;)
-var channel = DC()
+var channel = DC() // when testing, disable dht `{dht: false}`
 
 // Announce that your server is listening on port 3000
 // to anyone asking for &#39;my-channel-id&#39;
@@ -693,7 +693,7 @@ channel.join(&#39;my-channel-id&#39;, 3000)
 </code></pre>
 <p>Client example:</p>
 <pre><code class="lang-js">var DC = require(&#39;discovery-channel&#39;)
-var channel = DC()
+var channel = DC() // when testing, disable dht `{dht: false}`
 
 // Ask to be notified of &#39;my-channel-id&#39; servers
 channel.join(&#39;my-channel-id&#39;)
@@ -704,6 +704,11 @@ channel.once(&#39;peer&#39;, function (id, peer) {
 </code></pre>
 <p>You can use any channel id you want to. A good idea would be to pass the channel id as a command line argument.</p>
 <pre><code class="lang-js">var channelId = process.argv[2]
+</code></pre>
+<p>To avoid spamming the global DHT with a lot of soon to be invalid
+entries, it&#39;s a good idea to disable the global DHT while testing. To do
+so, initiate discovery-channel like so:</p>
+<pre><code class="lang-js">var channel = DC({dht: false})
 </code></pre>
 <h2 id="testing">Testing</h2>
 <p>To test your solution first run the server.</p>

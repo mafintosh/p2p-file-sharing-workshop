@@ -660,13 +660,33 @@ body { padding: 40px; }
 <p>However there are still many ways we can improve our program. Right now it&#39;s only possible to download the enitre file from a server. This is not very distributed. In p2p systems, it&#39;s normal to fetch small parts (called chunks) of the file from different peers at the same time. This distributes the load of downloading.</p>
 <p>To do this however we need to change our small program a little bit:</p>
 <ul>
-<li>We&#39;ll introduce a message protocol so that the client and server can communicate outside of just sending the actual data</li>
-<li>Using the message protocol we&#39;ll allow the client to request only a specific chunk of the file</li>
+<li>We&#39;ll invent a protocol on top of the raw TCP socket so that the client and server can communicate outside of just sending the actual data</li>
+<li>Using the message protocol we&#39;ll allow the client to request only a specific chunk of the file and the server to respond with that chunk</li>
 </ul>
 <p>There&#39;s a Node module that can read and write the file in fixed size chunks. It&#39;s called <a href="https://github.com/feross/fs-chunk-store">fs-chunk-store</a>.</p>
-<p>To create the message protocol, let&#39;s use the Node module called <a href="https://github.com/watson/msgpack5-stream">msgpack5-stream</a>.</p>
+<p>To create the message protocol, let&#39;s use the Node module called <a href="https://github.com/watson/msgpack5-stream">msgpack5-stream</a>. Using this moudule, it&#39;s really easy to encode complex JavaScript objects into a binary form that we can send over TCP and then decode on the other side as illustrated below.</p>
+<p>Client:</p>
+<pre><code class="lang-js">var stream = msgpack(socket)   // wrap server TCP socket with msgpack-stream
+stream.write({hello: &#39;world&#39;}) // send JavaScript object over the socket
+</code></pre>
+<p>Server:</p>
+<pre><code class="lang-js">var stream = msgpack(socket) // wrap client TCP socket with msgpack-stream
+
+// emitted every time a message is received on the socket
+stream.on(&#39;data&#39;, function (obj) {
+  console.log(obj) // {hello: &#39;world&#39;}
+})
+</code></pre>
+<h2 id="pre-assignment">Pre-assignment</h2>
+<p>Invent a protocol we can use to both request a chunk of a file and respond with the requested chunk. Feel free to come up with your own protocol, but here&#39;s our suggestion for reference:</p>
+<pre><code class="lang-js">// requesting chunk
+{type: &#39;request&#39;, index: &lt;chunk-num&gt;}
+// responding with chunk
+{type: &#39;response&#39;, index: &lt;chunk-num&gt;, data: &lt;buffer&gt;}
+</code></pre>
 <h2 id="assignment">Assignment</h2>
-<p>Here&#39;s a basic server that understands msgpack. Your job is to fill in the missing parts indicated by the <code>TODO</code> comments.</p>
+<p>Here&#39;s a basic server and client that understands msgpack. Your job is to fill in the missing parts indicated by the <code>TODO</code> comments.</p>
+<p>Server:</p>
 <pre><code class="lang-js">var fs = require(&#39;fs&#39;)
 var net = require(&#39;net&#39;)
 var DC = require(&#39;discovery-channel&#39;)
@@ -681,10 +701,10 @@ if (!id || !filename) {
   process.exit(1)
 }
 
-var CHUNK_SIZE = 1024
+var CHUNK_SIZE = 1024 // Arbitrary chunk size that fits in memory (not too big, not too small)
 var FILE_LENGTH = fs.statSync(filename).size
 var file = fsChunkStore(CHUNK_SIZE, {path: filename, length: FILE_LENGTH})
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 
 var server = net.createServer(function (socket) {
   console.log(&#39;New peer connected: %s:%s&#39;, socket.remoteAddress, socket.remotePort)
@@ -693,8 +713,7 @@ var server = net.createServer(function (socket) {
   var protocol = msgpack(socket)
 
   protocol.on(&#39;data&#39;, function (msg) {
-    // TODO: If the message type is `request`, respond with the requested chunk
-    // The response should look like {type: &#39;response&#39;, chunk: chunkNumber, data: chunkData}
+    // TODO: Respond to request messages with the requested chunk
   })
 })
 
@@ -703,11 +722,8 @@ server.listen(function () {
   console.log(&#39;Sharing %s as %s&#39;, filename, id)
 })
 </code></pre>
-<h2 id="testing">Testing</h2>
-<p>Here&#39;s a client that also uses msgpack that you can use to test your server. It will just output the returned message.</p>
-<p>Here&#39;s how to run it:</p>
-<pre><code>node client.js &lt;channel-id&gt; &lt;chunk-number&gt;
-</code></pre><pre><code class="lang-js">var fs = require(&#39;fs&#39;)
+<p>Client:</p>
+<pre><code class="lang-js">var fs = require(&#39;fs&#39;)
 var net = require(&#39;net&#39;)
 var DC = require(&#39;discovery-channel&#39;)
 var msgpack = require(&#39;msgpack5-stream&#39;)
@@ -720,7 +736,7 @@ if (!id || !chunk) {
   process.exit(1)
 }
 
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 channel.join(id)
 
 channel.once(&#39;peer&#39;, function (peerId, peer, type) {
@@ -737,8 +753,12 @@ channel.once(&#39;peer&#39;, function (peerId, peer, type) {
   })
 
   console.log(&#39;Fetching chunk %d from %s...&#39;, chunk, id)
-  protocol.write({type: &#39;request&#39;, chunk: chunk})
+  // TODO: Send request for `chunk` to server
 })
 </code></pre>
+<h2 id="testing">Testing</h2>
+<p>Use the client to ask the server for a specific chunk:</p>
+<pre><code>node client.js &lt;channel-id&gt; &lt;chunk-number&gt;
+</code></pre><p>Validate that you get different chunks depending on which <code>&lt;chunk-number&gt;</code> you request.</p>
 <p>When you are done <a href="09.html">click here to go to the next exercise</a></p>
 </body></html>

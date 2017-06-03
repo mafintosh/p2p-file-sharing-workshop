@@ -22,6 +22,7 @@ var server = http.createServer(function (req, res) {
     var range = req.headers.range && parseRange(handshake.fileSize, req.headers.range)[0]
 
     res.setHeader('Access-Ranges', 'bytes')
+    res.setHeader('Content-Type', handshake.mimeType)
     // TODO: Set Content-Type header as well
 
     if (!range || range < 0) {
@@ -31,17 +32,39 @@ var server = http.createServer(function (req, res) {
     } else {
       res.statusCode = 206
       res.setHeader('Content-Length', range.end - range.start + 1)
-      res.setHeader('Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + entry.length)
+      res.setHeader('Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + handshake.fileSize)
       if (req.method === 'HEAD') return res.end()
       // TODO: Stream segment file
-      throw new Error('Not implemented yet')
+      pump(createStream(range), res)
     }
 
     function createStream (opts) {
-      var i = 0
+      if (!opts) opts = {}
+      if (!opts.end) opts.end = handshake.fileSize
+      if (!opts.start) opts.start = 0
+
+      var length = opts.end - opts.start + 1
+      var offset = opts.start % handshake.chunkSize
+      var i = Math.floor(opts.start / handshake.chunkSize)
+
       return from(function (size, cb) {
-        if (i >= handshake.hashes.length) return cb(null, null)
-        client.getData(i++, cb)
+        if (!length || i >= handshake.hashes.length) return cb(null, null)
+
+        client.getData(i++, function (err, data) {
+          if (err) return cb(err)
+
+          if (offset) {
+            data = data.slice(offset)
+            offset = 0
+          }
+
+          if (data.length > length) {
+            data = data.slice(0, length)
+          }
+
+          length -= data.length
+          cb(null, data)
+        })
       })
     }
   })

@@ -7,6 +7,7 @@ var DC = require('discovery-channel')
 var msgpack = require('msgpack5-stream')
 var fsChunkStore = require('fs-chunk-store')
 var hasher = require('fixed-size-chunk-hashing')
+var mime = require('mime')
 
 var filename = process.argv[2]
 
@@ -15,6 +16,7 @@ if (!filename) {
   process.exit(1)
 }
 
+var type = mime.lookup(filename)
 var CHUNK_SIZE = 32 * 1024
 var fileSize = fs.statSync(filename).size
 var file = fs.createReadStream(filename)
@@ -46,6 +48,7 @@ file.pipe(hasher(CHUNK_SIZE, function (err, hashes) {
 
     protocol.write({
       type: 'handshake',
+      mimeType: type,
       hashes: hashes,
       chunkSize: CHUNK_SIZE,
       fileSize: fileSize

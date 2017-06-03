@@ -13,10 +13,12 @@
     "discovery-swarm": "^4.0.2",
     "duplexify": "^3.4.5",
     "fixed-size-chunk-hashing": "^1.0.0",
+    "from2": "^2.3.0",
     "fs-chunk-store": "^1.6.4",
     "hash-of-stream": "^1.0.0",
     "msgpack5-stream": "^1.0.0",
-    "pump": "^1.0.1"
+    "pump": "^1.0.1",
+    "range-parser": "^1.2.0"
   },
   "devDependencies": {},
   "keywords": [],

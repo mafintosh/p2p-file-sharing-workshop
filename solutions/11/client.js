@@ -16,7 +16,7 @@ if (!id || !filename) {
   process.exit(1)
 }
 
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 var downloaded = new Bitfield(1024, {grow: Infinity})
 
 channel.join(id)

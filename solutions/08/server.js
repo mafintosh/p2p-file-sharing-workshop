@@ -20,7 +20,7 @@ if (!id || !filename) {
 var CHUNK_SIZE = 1024
 var FILE_LENGTH = fs.statSync(filename).size
 var file = fsChunkStore(CHUNK_SIZE, {path: filename, length: FILE_LENGTH})
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 
 var server = net.createServer(function (socket) {
   console.log('New peer connected: %s:%s', socket.remoteAddress, socket.remotePort)

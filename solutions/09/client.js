@@ -16,7 +16,7 @@ if (process.argv.length < 4) {
   process.exit(1)
 }
 
-var channel = DC()
+var channel = DC({dht: false}) // set true to work over the internet
 
 channel.join(id)
 

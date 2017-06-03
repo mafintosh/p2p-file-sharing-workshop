@@ -20,7 +20,7 @@ var file = fs.createReadStream(filename)
 
 // Get the hash of the file
 hasher(file, function (hash) {
-  var channel = DC()
+  var channel = DC({dht: false}) // set true to work over the internet
 
   var server = net.createServer(function (socket) {
     console.log('New peer connected: %s:%s', socket.remoteAddress, socket.remotePort)

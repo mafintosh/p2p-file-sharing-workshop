@@ -7,7 +7,9 @@ var pump = require('pump')
 var DC = require('discovery-channel')
 
 // Initialize a new channel
-var channel = DC()
+// In this example we disable the global DHT so not to spam it every time we
+// run the server. In a real app, you'd normally like to use the DHT.
+var channel = DC({dht: false})
 
 var server = net.createServer(function (socket) {
   console.log('New peer connected: %s:%s', socket.remoteAddress, socket.remotePort)

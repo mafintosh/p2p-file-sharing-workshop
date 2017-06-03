@@ -7,7 +7,9 @@ var pump = require('pump')
 var DC = require('discovery-channel')
 
 // Initialize a new channel
-var channel = DC()
+// In this example we disable the global DHT so not to spam it every time we
+// run the server. In a real app, you'd normally like to use the DHT.
+var channel = DC({dht: false})
 
 // The client needs to know which server ID to join. Expect the ID is
 // provided as the first argument when running the client program

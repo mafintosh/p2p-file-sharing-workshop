@@ -23,7 +23,6 @@ var server = http.createServer(function (req, res) {
 
     res.setHeader('Access-Ranges', 'bytes')
     res.setHeader('Content-Type', handshake.mimeType)
-    // TODO: Set Content-Type header as well
 
     if (!range || range < 0) {
       res.setHeader('Content-Length', handshake.fileSize)
@@ -34,7 +33,6 @@ var server = http.createServer(function (req, res) {
       res.setHeader('Content-Length', range.end - range.start + 1)
       res.setHeader('Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + handshake.fileSize)
       if (req.method === 'HEAD') return res.end()
-      // TODO: Stream segment file
       pump(createStream(range), res)
     }
 

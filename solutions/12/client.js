@@ -16,9 +16,9 @@ module.exports = function (id) {
   var filename = path.join(os.tmpdir(), id)
   var queue = []
   var fetchers = []
+  var connected = {}
   var handshake
   var file
-  var connected = {}
 
   channel.join(id)
 
